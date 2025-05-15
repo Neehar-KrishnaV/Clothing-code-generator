@@ -1,0 +1,83 @@
+import javax.swing.*;
+import java.awt.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class ClothingCodeGenerator extends JFrame {
+    private JTextField orderField, colorField;
+    private JComboBox<String> sizeBox, genderBox, typeBox;
+    private JTextArea resultArea;
+    private int serialCounter = 1;
+
+    public ClothingCodeGenerator() {
+        setTitle("Clothing Code Generator");
+        setSize(500, 400);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(new GridLayout(8, 2, 10, 10));
+
+        // Components
+        add(new JLabel("Order ID:"));
+        orderField = new JTextField();
+        add(orderField);
+
+        add(new JLabel("Size:"));
+        sizeBox = new JComboBox<>(new String[]{"S", "M", "L", "XL", "XLL"});
+        add(sizeBox);
+
+        add(new JLabel("Color Code:"));
+        colorField = new JTextField();
+        add(colorField);
+
+        add(new JLabel("Gender:"));
+        genderBox = new JComboBox<>(new String[]{"M", "F"});
+        add(genderBox);
+
+        add(new JLabel("Type:"));
+        typeBox = new JComboBox<>(new String[]{"TS", "SH", "HD", "CS", "PT", "ST"});
+        add(typeBox);
+
+        JButton generateButton = new JButton("Generate Code");
+        add(generateButton);
+
+        JButton resetButton = new JButton("Reset");
+        add(resetButton);
+
+        resultArea = new JTextArea();
+        resultArea.setEditable(false);
+        add(new JScrollPane(resultArea));
+        add(new JLabel()); // Empty cell
+
+        // Logic
+        generateButton.addActionListener(e -> {
+            String orderID = orderField.getText().trim();
+            String size = (String) sizeBox.getSelectedItem();
+            String color = colorField.getText().trim().toUpperCase();
+            String gender = (String) genderBox.getSelectedItem();
+            String type = (String) typeBox.getSelectedItem();
+            String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
+            String serial = String.format("%03d", serialCounter++);
+
+            if (orderID.isEmpty() || color.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Please fill all fields.");
+                return;
+            }
+
+            String code = orderID + "-" + date + "-" + size + "-" + color + "-" + gender + "-" + type + "-" + serial;
+            resultArea.append(code + "\n");
+        });
+
+        resetButton.addActionListener(e -> {
+            orderField.setText("");
+            colorField.setText("");
+            resultArea.setText("");
+            serialCounter = 1;
+        });
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            new ClothingCodeGenerator().setVisible(true);
+        });
+    }
+}
